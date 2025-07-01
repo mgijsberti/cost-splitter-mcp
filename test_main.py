@@ -1,18 +1,21 @@
+"""Unit tests for the split_costs function in the cost-splitter MCP service."""
+# pylint: disable=trailing-whitespace
 import pytest
 from main import split_costs, Person, Transaction
 
 
 class TestSplitCosts:
+    """Test cases for the split_costs function."""
     def test_empty_list(self):
         """Test with empty list of people"""
         result = split_costs([])
-        assert result == []
+        assert not result
 
     def test_single_person(self):
         """Test with single person"""
         people = [Person(name="Alice", paid=100.0)]
         result = split_costs(people)
-        assert result == []
+        assert not result
 
     def test_two_people_equal_payment(self):
         """Test with two people who paid equal amounts"""
@@ -21,7 +24,7 @@ class TestSplitCosts:
             Person(name="Bob", paid=50.0)
         ]
         result = split_costs(people)
-        assert result == []
+        assert not result
 
     def test_two_people_unequal_payment(self):
         """Test with two people who paid different amounts"""
@@ -30,8 +33,7 @@ class TestSplitCosts:
             Person(name="Bob", paid=40.0)
         ]
         result = split_costs(people)
-        expected = [Transaction(**{"from": "Bob", "to": "Alice", "amount": 10.0})]
-        assert result == expected
+        assert result == [Transaction(**{"from": "Bob", "to": "Alice", "amount": 10.0})]
 
     def test_three_people_simple_split(self):
         """Test with three people - simple case"""
@@ -41,10 +43,6 @@ class TestSplitCosts:
             Person(name="Charlie", paid=50.0)
         ]
         result = split_costs(people)
-        expected = [
-            Transaction(**{"from": "Bob", "to": "Alice", "amount": 16.67}),
-            Transaction(**{"from": "Charlie", "to": "Alice", "amount": 16.67})
-        ]
         assert len(result) == 2
         assert result[0].amount == pytest.approx(16.67, abs=0.02)
         assert result[1].amount == pytest.approx(16.67, abs=0.02)
@@ -77,14 +75,14 @@ class TestSplitCosts:
         net_received = {p.name: 0.0 for p in people}
         for t in result:
             net_received[t.from_person] -= t.amount
-            net_received[t.to] += t.amount
-        
+            net_received[t.to] += t.amount       
         avg = sum(p.paid for p in people) / len(people)
         for p in people:
             # Net payment = original paid - net received
             # This should equal the average amount each person should have paid
             net_payment = p.paid - net_received[p.name]
-            assert abs(net_payment - avg) < 0.01, f"{p.name} net payment {net_payment} does not equal average {avg}"
+            assert abs(net_payment - avg) < 0.01, (
+                f"{p.name} net payment {net_payment} does not equal average {avg}")
 
     def test_decimal_precision(self):
         """Test that amounts are rounded to 2 decimal places"""
@@ -94,9 +92,7 @@ class TestSplitCosts:
             Person(name="Charlie", paid=33.34)
         ]
         result = split_costs(people)
-        # Total: 100, Average: 33.33
-        # Alice: 0, Bob: 0, Charlie: +0.01
-        assert result == []
+        assert not result
 
     def test_large_amounts(self):
         """Test with large amounts"""
@@ -106,8 +102,6 @@ class TestSplitCosts:
             Person(name="Charlie", paid=1500.0)
         ]
         result = split_costs(people)
-        # Total: 3000, Average: 1000
-        # Alice: 0, Bob: -500, Charlie: +500
         expected = [Transaction(**{"from": "Bob", "to": "Charlie", "amount": 500.0})]
         assert result == expected
 
@@ -118,8 +112,6 @@ class TestSplitCosts:
             Person(name="Bob", paid=150.0)
         ]
         result = split_costs(people)
-        # Total: 100, Average: 50
-        # Alice: -100, Bob: +100
         expected = [Transaction(**{"from": "Alice", "to": "Bob", "amount": 100.0})]
         assert result == expected
 
@@ -134,4 +126,7 @@ class TestSplitCosts:
         transaction = result[0]
         assert transaction.from_person == "Bob"
         assert transaction.to == "Alice"
-        assert transaction.amount == 10.0 
+        assert transaction.amount == 10.0  # pylint: disable=trailing-whitespace
+
+# pylint: disable=missing-final-newline
+        
