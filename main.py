@@ -1,20 +1,24 @@
-from fastmcp import FastMCP
+"""Main module for the cost-splitter MCP service."""
 from typing import List
+from fastmcp import FastMCP
 from pydantic import BaseModel, Field
 
 mcp = FastMCP()
 
 # Cost-splitting logic
 class Person(BaseModel):
+    """Represents a person and the amount they paid."""
     name: str
     paid: float
 
 class Transaction(BaseModel):
+    """Represents a transaction from one person to another."""
     from_person: str = Field(alias="from")
     to: str
     amount: float
 
 def split_costs(people: List[Person]) -> List[Transaction]:
+    """Splits costs among people and returns the required transactions."""
     n = len(people)
     if n == 0:
         return []
@@ -63,6 +67,7 @@ def split_costs(people: List[Person]) -> List[Transaction]:
 # Register the MCP tool
 @mcp.tool()
 def equalize_costs(people: List[Person]) -> List[Transaction]:
+    """MCP tool to equalize costs among people."""
     return split_costs(people)
 
 if __name__ == "__main__":
