@@ -1,8 +1,8 @@
 """Main module for the cost-splitter MCP service."""
+import os
 from typing import List
 from fastmcp import FastMCP
 from pydantic import BaseModel, Field
-import os
 
 mcp = FastMCP()
 
