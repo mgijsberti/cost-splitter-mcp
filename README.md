@@ -98,9 +98,27 @@ uv pip install --upgrade -r requirements.txt
 uv pip freeze > requirements.txt
 ```
 
-### 6. Run tests 
+### 6. Install just
+
+This project uses [`just`](https://github.com/casey/just) as a command runner to simplify common development tasks (like linting and testing).
+
+To install `just`:
+
+On macOS (with Homebrew):
+```sh
+brew install just
+```
+
+On Linux (with apt):
+```sh
+sudo apt-get install just
+```
+
+Or see the [just installation guide](https://github.com/casey/just#installation) for other platforms and methods.
+
+### 7. Run CI (linting and testing)
 
 in terminal execute:
 ```sh
-    ./run_all.tests.sh
+    just ci
 ```
