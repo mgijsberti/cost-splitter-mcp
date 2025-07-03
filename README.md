@@ -12,7 +12,7 @@ Add to Claude Desktop configuration file:
       "command" : "uv",
       "args" : [
          "--directory",
-        "/Users/mgijsberti/Documents/Projects/cost-splitter-mcp",
+        "/USERS/PATH/cost-splitter-mcp",
         "run",
         "main.py"
       ]
