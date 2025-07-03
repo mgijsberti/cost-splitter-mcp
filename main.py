@@ -1,4 +1,5 @@
 """Main module for the cost-splitter MCP service."""
+import os
 from typing import List
 from fastmcp import FastMCP
 from pydantic import BaseModel, Field
@@ -71,4 +72,9 @@ def equalize_costs(people: List[Person]) -> List[Transaction]:
     return split_costs(people)
 
 if __name__ == "__main__":
-    mcp.run(transport="http", host="0.0.0.0", port=8000)
+    if os.environ.get("TEST_MODE", "false").lower() == "true":
+        print("[cost-splitter] Starting MCP server in HTTP (test) mode on 0.0.0.0:8000...")
+        mcp.run(transport="http", host="0.0.0.0", port=8000)
+    else:
+        print("[cost-splitter] Starting MCP server in STDIO (Claude Desktop) mode...")
+        mcp.run()

@@ -19,8 +19,8 @@ if lsof -i :8000 | grep LISTEN; then
   sleep 1
 fi
 
-# Start the service in the background
-uv run main.py &
+# Start the service in the background with TEST_MODE enabled
+TEST_MODE=true uv run main.py &
 SERVICE_PID=$!
 
 # Wait for the service to be ready (up to 20 seconds)
